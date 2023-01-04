@@ -1,4 +1,10 @@
-.grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-  }
+.nft-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.nft-grid img {
+  flex: 1;
+  margin: 10px;
+}
