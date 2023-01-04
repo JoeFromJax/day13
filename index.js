@@ -1,66 +1,100 @@
-import { Alchemy, Network } from "alchemy-sdk";
+import axios from "axios";
 
-const settings = {
-  apiKey: "D5jtQTYVyu9_tx2jInmHBWIcmoUogGch",
-  network: Network.ETH_MAINNET,
-};
+const submitButton = document.getElementById("submit-button");
+const addressInput = document.getElementById("address-input");
+const container = document.createElement("div");
+container.classList.add("nft-images-container");
+const table = document.createElement("table");
+const loadingIndicator = document.createElement("div");
+loadingIndicator.classList.add("loading-indicator");
 
-const alchemy = new Alchemy(settings);
-
-function main() {
-  return new Promise((resolve, reject) => {
-    const walletAddress = document.getElementById('wallet-address').value;
-    alchemy.nft.getNftsForOwner(walletAddress)
-      .then(nfts => {
-        const nftDiv = document.getElementById('nfts');
-        nftDiv.innerHTML = ''; // Clear existing NFTs
-        for (const nft of nfts.ownedNfts) {
-          // Create an img element for the NFT
-          const img = document.createElement('img');
-          img.src = nft.thumbnail;
-          img.alt = nft.title;
-          // Append the img element to the NFT div
-          nftDiv.appendChild(img);
-        }
-        resolve();
-      })
-      .catch(error => reject(error));
-  });
+function showLoadingIndicator() {
+  container.innerHTML = "";
+  container.appendChild(loadingIndicator);
 }
 
-function fetchNFTs() {
-  main()
-    .then(() => {
-      // Get token balances
-      return alchemy.core.getTokenBalances(walletAddress);
-    })
-    .then(balances => {
-      // Remove tokens with zero balance
-      const nonZeroBalances = balances.tokenBalances.filter((token) => {
-        return token.tokenBalance !== '0';
-      });
-      console.log(`Token balances of ${walletAddress}:`);
-      // Counter for SNo of final output
-      let i = 1;
-  
-      // Loop through all tokens with non-zero balance
-      for (const token of nonZeroBalances) {
-        // Get balance of token
-        let balance = token.tokenBalance;
-        // Get metadata of token
-        return alchemy.core.getTokenMetadata(token.contractAddress)
-          .then(metadata => {
-            // Compute token balance in human-readable format
-            balance = balance / Math.pow(10, metadata.decimals);
-            balance = balance.toFixed(2);
-  
-            // Print name, balance, and symbol of token
-            console.log(`${i++}. ${metadata.name}: ${balance} ${metadata.symbol}`);
-          });
+function hideLoadingIndicator() {
+  container.removeChild(loadingIndicator);
+}
+
+function clearTable() {
+  while (table.firstChild) {
+    table.removeChild(table.firstChild);
+  }
+}
+
+function displayError(error) {
+  container.innerHTML = "";
+  const errorMessage = document.createElement("p");
+  errorMessage.innerHTML = error;
+  container.appendChild(errorMessage);
+}
+
+submitButton.addEventListener("click", function () {
+  if (!addressInput.value) {
+    return displayError("Please enter a valid wallet address.");
+  }
+
+  showLoadingIndicator();
+  clearTable();
+
+  const apiKey = "D5jtQTYVyu9_tx2jInmHBWIcmoUogGch";
+  const baseURL = `https://eth-mainnet.g.alchemy.com/nft/v2/${apiKey}/getNFTs/`;
+  const ownerAddr = addressInput.value;
+
+  var config = {
+    method: "get",
+    url: `${baseURL}?owner=${ownerAddr}`,
+   };
+
+  axios(config)
+    .then(function (response) {
+      console.log(response.data);
+
+      for (const nft of response.data.ownedNfts) {
+        // Create a row element for each NFT
+        const row = document.createElement("tr");
+
+        // Create the cell element for the NFT name
+        const nameCell = document.createElement("td");
+        nameCell.innerHTML = nft.name;
+
+        // Create the cell element for the NFT balance
+        const balanceCell = document.createElement("td");
+        balanceCell.innerHTML = nft.balance;
+
+        // Create the cell element for the NFT image
+        const imageCell = document.createElement("td");
+
+        // Create the img element
+        const img = document.createElement("img");
+        img.src = nft.imageUrl;
+        img.alt = nft.name;
+
+        // Append the img element to the cell element
+        imageCell.appendChild(img);
+
+        // Append the cell elements to the row element
+        row.appendChild(nameCell);
+        row.appendChild(balanceCell);
+        row.appendChild(imageCell);
+
+        // Append the row element to the table element
+        table.appendChild(row);
       }
-    })
-    .catch(error => console.error(error));
-}
 
-const button = document.getElementById('submit-button');
-button.addEventListener('click', fetchNFTs);
+          // Append the table element to the container element
+          container.appendChild(table);
+
+          hideLoadingIndicator();
+        })
+        .catch(function (error) {
+          console.error(error);
+          displayError("An error occurred while fetching NFTs.");
+          hideLoadingIndicator();
+        });
+    });
+    
+    // Append the container element to the document
+    document.body.appendChild(container);
+    

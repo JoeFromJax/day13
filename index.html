@@ -1,23 +1,47 @@
+<!DOCTYPE html>
 <html>
+<head>
 
-  <head>
-    <title>NFTs and ERC20 Tokens</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
-  </head>
+  <link rel="stylesheet" type="text/css" href="index.css">
 
-  <body>
-    <h1>NFTs and ERC20 Tokens</h1>
-    <p>Enter your wallet address:</p>
-    <input type="text" id="wallet-address">
-    <button id="submit-button">Submit</button>
-    <div class="nft-grid">
-    <div id="nfts"></div>
-    <div id="tokens"></div>
-    </div>
-    <script src="bundle.js"></script>
-  </body>
+  <meta charset="utf-8">
+  <title>NFT Gallery</title>
+  <style>
+    /* Add some styling to center the table on the page */
+    .nft-table {
+      margin: 0 auto;
+      text-align: center;
+    }
 
-  </html>
+    /* Add some styling to display the NFTs in rows of four */
+    .nft-table tr {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .nft-table td {
+      width: 25%;
+    }
+  </style>
+</head>
+<body>
+  <h1>NFT Gallery</h1>
+  <p>Enter your wallet address:</p>
+  <input type="text" id="address-input">
+  <button class="button-default" id="submit-button">Submit</button>
+  <table class="nft-table">
+    <!-- Add a row element for each NFT -->
+    <tr>
+      <!-- Add a cell element for the NFT name -->
+      <td>NFT Name</td>
+      <!-- Add a cell element for the NFT balance -->
+      <td>NFT Balance</td>
+      <!-- Add a cell element for the NFT image -->
+      <td>
+        <img src="http://placeholder.com/100x100" alt="NFT Image">
+      </td>
+    </tr>
+  </table>
+  <script src="bundle.js"></script>
+</body>
+</html>

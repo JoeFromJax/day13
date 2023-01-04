@@ -1,10 +1,24 @@
-.nft-grid {
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.nft-images-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-.nft-grid img {
-  flex: 1;
-  margin: 10px;
+.loading-indicator {
+  width: 100%;
+  text-align: center;
 }
