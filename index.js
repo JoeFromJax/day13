@@ -129,4 +129,3 @@ submitButton.addEventListener("click", function () {
     
     // Append the container element to the document
     document.body.appendChild(container);
-    
