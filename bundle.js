@@ -46,30 +46,55 @@ submitButton.addEventListener("click", function () {
     for (const nft of response.data.ownedNfts) {
       // Create a row element for each NFT
       const row = document.createElement("tr");
-
-      // Create the cell element for the NFT name
-      const nameCell = document.createElement("td");
-      nameCell.innerHTML = nft.name;
+      if (typeof response.data.ownedNfts !== 'undefined' && response.data.ownedNfts instanceof Array) {
+        // ownedNfts property exists and is an array
+      } else {
+        // ownedNfts property is not an array or does not exist
+      }
+      if (nft.hasOwnProperty('title') && nft.hasOwnProperty('balance') && nft.hasOwnProperty('imageUrl')) {
+        // NFT object has the expected properties
+      } else {
+        // NFT object is missing one or more of the expected properties
+      }
+      if (nft.imageUrl && typeof nft.imageUrl === "string") {
+        const img = document.createElement("img");
+        img.src = nft.imageUrl;
+        img.alt = nft.title;
+        // append the img element to the DOM
+      } else {
+        // display a placeholder image or handle the error
+      }
+      // Create the cell element for the NFT title
+      const titleCell = document.createElement("td");
+      titleCell.innerHTML = nft.title;
 
       // Create the cell element for the NFT balance
       const balanceCell = document.createElement("td");
       balanceCell.innerHTML = nft.balance;
 
-      // Create the cell element for the NFT image
-      const imageCell = document.createElement("td");
+      //creates image Cell
+      const imageCellElement = document.createElement("div");
+      imageCellElement.classList.add('img-cell');
+      console.log(nft.media[0].raw);
+      const imgElement = document.createElement('img');
+      imgElement.classList.add('img');
+      let urlImage = nft.media[0].gateway;
+      if (urlImage && urlImage.startsWith("ipfs://")) {
+        urlImage = "https://ipfs.io/ipfs/" + urlImage.slice(8);
+      }
+      imgElement.src = urlImage;
+      imgElement.onerror = function () {
+        // Display placeholder image
+        this.src = 'https://png.pngtree.com/png-vector/20190223/ourmid/pngtree-vector-picture-icon-png-image_695350.jpg';
+      };
 
-      // Create the img element
-      const img = document.createElement("img");
-      img.src = nft.imageUrl;
-      img.alt = nft.name;
-
-      // Append the img element to the cell element
-      imageCell.appendChild(img);
+      // Append the img element to the image cell element
+      imageCellElement.appendChild(imgElement);
 
       // Append the cell elements to the row element
-      row.appendChild(nameCell);
+      row.appendChild(titleCell);
       row.appendChild(balanceCell);
-      row.appendChild(imageCell);
+      row.appendChild(imageCellElement);
 
       // Append the row element to the table element
       table.appendChild(row);
